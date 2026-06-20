@@ -58,9 +58,11 @@ python -m src.chip_support compare
 | `src/optimizer.py` | Pruning, distillation, channel pruning, FLOPs calc |
 | `src/deploy.py` | Deploy to 15+ AI chips (Movidius, Hailo, Axelera, Qualcomm, etc.) |
 | `src/chip_support.py` | Multi-chip database, recommendation engine, comparison tables |
+| `src/xnor_net.py` | XNOR-Net binarization, ternary (BitNet b1.58), memory comparison |
 | `src/benchmark.py` | Latency, throughput, memory, power benchmarking |
 | `src/models.py` | BinaryNet, BinaryCNN, BinaryResNet architectures |
 | `src/visualize.py` | Weight visualization, benchmark plots |
+| `doc/AI_ARCHAEOLOGY.md` | Deep dive: NCSDK→OpenVINO, XNOR-Net math, 512MB bottleneck, modern alternatives |
 
 ## Usage Examples
 
@@ -196,8 +198,47 @@ quantized_model = quantizer.quantize_int8(model, calibration_data)
 | **Q1 2026** | Distributed inference across multiple chips, model partitioning, federated edge learning |
 | **Q2 2026** | v2.0 release: auto-chip selection, pipeline builder, REST API, web dashboard |
 
+## AI Archeology: Why This Repo Matters
+
+> This repository captures the exact moment when AI first left the datacenter.
+
+### The Core Insight
+
+In 2017, Movidius NCS had **512MB RAM** and **no hardware FPU**. XNOR-Net replaced FP32 multiply with bitwise XNOR + Popcount, achieving **5-10x speedup** on SHAVE cores.
+
+### NCSDK → OpenVINO Evolution
+
+| Era | SDK | Model Format | Support |
+|-----|-----|-------------|---------|
+| 2017 | NCSDK | `.graph` (binary) | Vision CNNs only |
+| 2018 | OpenVINO | `.xml` + `.bin` (IR) | CPU/GPU/VPU |
+| 2024 | OpenVINO GenAI | ONNX, IR | LLMs + Vision |
+
+### Why 1-Bit Fails for LLMs
+
+| Feature | XNOR-Net (1-bit) | BitNet b1.58 (ternary) |
+|---------|-------------------|------------------------|
+| Values | {-1, +1} | {-1, 0, +1} |
+| Zero gate | ❌ No | ✅ Yes |
+| LLM quality | Poor (hallucination) | Excellent |
+| Year | 2016 | 2024 |
+
+The **zero value** in ternary quantization acts as a gate — allowing the model to "shut up" irrelevant neurons. Pure 1-bit causes LLMs to hallucinate because neurons can never be off.
+
+### The 512MB Wall
+
+```
+Qwen 3.6 (27B) at 1-bit = 3.375 GB
+Movidius NCS memory      = 0.500 GB
+Overflow                 = 6.75x
+```
+
+**See `doc/AI_ARCHAEOLOGY.md` for the full analysis.**
+
 ## Requirements
 
+```bash
+pip install -e .
 ```
 torch>=2.1.0
 numpy>=1.26.0
