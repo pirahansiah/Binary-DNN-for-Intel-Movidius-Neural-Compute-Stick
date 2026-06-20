@@ -1,12 +1,9 @@
-# Binary DNN — Multi-Chip Edge AI Deployment
+# MVP and Research about Binary DNN — Multi-Chip Edge AI Deployment
 
 [![Python](https://img.shields.io/badge/Python-3.10+-yellow.svg)](https://www.python.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Binary and quantized neural network deployment across **15+ AI accelerators** — from microcontrollers to datacenter.
-
-> **By Dr. Farshid Pirahansiah** — [www.tiziran.com](https://www.tiziran.com) | [YouTube](https://www.youtube.com/tiziran)
-
 ## Supported AI Chips
 
 | Chip | Vendor | TOPS/W | Max Model | Precisions | Interface |
