@@ -59,6 +59,7 @@ python -m src.chip_support compare
 | `src/deploy.py` | Deploy to 15+ AI chips (Movidius, Hailo, Axelera, Qualcomm, etc.) |
 | `src/chip_support.py` | Multi-chip database, recommendation engine, comparison tables |
 | `src/xnor_net.py` | XNOR-Net binarization, ternary (BitNet b1.58), memory comparison |
+| `src/nncf_integration.py` | Intel NNCF quantization — modern successor to XNOR-Net |
 | `src/benchmark.py` | Latency, throughput, memory, power benchmarking |
 | `src/models.py` | BinaryNet, BinaryCNN, BinaryResNet architectures |
 | `src/visualize.py` | Weight visualization, benchmark plots |
@@ -234,6 +235,57 @@ Overflow                 = 6.75x
 ```
 
 **See `doc/AI_ARCHAEOLOGY.md` for the full analysis.**
+
+## Modern Equivalent: Intel NNCF
+
+> NNCF is the modern successor to XNOR-Net — it can quantize LLMs to 4-bit/8-bit on Intel hardware.
+
+```bash
+pip install nncf openvino transformers torch
+```
+
+### Quick Start
+
+```python
+from src.nncf_integration import NNCFCompressor, NNCFConfig, TargetDevice
+
+# Quantize any model to INT8
+compressor = NNCFCompressor(NNCFConfig(target_device=TargetDevice.CPU))
+quantized = compressor.quantize_int8(model, calibration_data)
+
+# Quantize LLM to INT4 (modern equivalent of XNOR-Net for LLMs)
+quantized_llm = compressor.quantize_llm(model, precision="int4")
+
+# Export to OpenVINO for deployment
+compressor.export_openvino(quantized, "output/model.xml")
+```
+
+### LLM Quantization Pipeline
+
+```python
+from src.nncf_integration import quantize_llm_with_nncf
+
+# Quantize Qwen 3.6 to INT4 on Intel hardware
+result = quantize_llm_with_nncf(
+    model_name="Qwen/Qwen2-0.5B",
+    output_dir="./quantized_qwen",
+    precision="int4",
+)
+```
+
+### Compare All Methods
+
+```bash
+python -m src.nncf_integration compare
+```
+
+| Method | Year | Precision | Speedup | LLM Support |
+|--------|------|-----------|---------|-------------|
+| XNOR-Net (this repo) | 2016 | 1-bit | 5-10x | ❌ |
+| NNCF PTQ INT8 | 2022 | 8-bit | 2-4x | ✅ |
+| NNCF INT4 (LLM) | 2024 | 4-bit | 2-3x | ✅ |
+| BitNet b1.58 | 2024 | 1.58-bit | 3-5x | ✅ |
+| GPTQ | 2022 | 4-bit | 2-3x | ✅ |
 
 ## Requirements
 
