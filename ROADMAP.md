@@ -1,67 +1,76 @@
-# ROADMAP.md — Binary-DNN-for-Intel-Movidius-Neural-Compute-Stick
+# ROADMAP.md — Binary DNN for Intel Movidius Neural Compute Stick
 
 ## 12-Month Vision
 
-Transform this BNN research prototype into a production-grade edge AI inference toolkit with automated model optimization, multi-hardware deployment, and comprehensive developer tooling.
+Evolve this project from a research prototype into a production-ready binary DNN deployment toolkit with full OpenVINO 2026 support, multi-hardware targeting, and automated accuracy-latency optimization pipelines.
 
-### Q1: Foundation & Core Engine (Months 1-3)
-- [ ] Migrate from legacy OpenVINO SDK to OpenVINO 2025.3 with API 2.0
-- [ ] Implement automated binarization training pipeline with PyTorch 2.x + ONNX export
-- [ ] Build hardware abstraction layer for Movidius NCS, NCS2, and Intel Arc VPU
-- [ ] Add CI/CD with GitHub Actions for cross-platform builds (ARM64, x86_64)
-- [ ] Write comprehensive unit tests (target: 80% coverage)
-- [ ] Create Docker-based development environments for reproducible builds
+---
 
-### Q2: GPU Acceleration & Optimization (Months 4-6)
-- [ ] Implement CUDA 13 kernels for training-side binarized layer acceleration
-- [ ] Add Apple Metal Performance Shaders backend for M5 Max / Neural Engine
-- [ ] Profile and optimize memory bandwidth for 2-bit and 4-bit mixed precision
-- [ ] Implement dynamic quantization scheduling based on real-time power monitoring
-- [ ] Add TensorRT export pathway for NVIDIA edge platforms
-- [ ] Benchmark against latest Qualcomm AI Engine and MediaTek APU targets
+### Q1 — Foundation & Modernization (Months 1-3)
 
-### Q3: Edge AI & Model Zoo (Months 7-9)
-- [ ] Release pre-trained BNN model zoo (ResNet, EfficientNet, MobileNet variants)
-- [ ] Implement architecture search for hardware-optimal BNN topologies (NAS-BNN)
-- [ ] Add support for vision transformers with binary attention mechanisms
-- [ ] Build ONNX Runtime integration for universal model deployment
-- [ ] Create Raspberry Pi 5 (16GB) optimized inference routines with NEON SIMD
-- [ ] Implement INT8 + binary hybrid quantization for Intel Ultra 9 AVX-512
+**Milestone: Functional PyTorch 2.x training pipeline with OpenVINO 2026 export**
 
-### Q4: Production & Ecosystem (Months 10-12)
-- [ ] Release v1.0 SDK with stable API and comprehensive documentation
-- [ ] Implement model versioning and A/B testing framework for edge deployments
-- [ ] Add remote model update (OTA) capability for deployed edge devices
-- [ ] Create Grafana dashboard for edge fleet monitoring and analytics
-- [ ] Publish benchmarking paper comparing BNN approaches across 2024-2026 edge hardware
-- [ ] Establish community contribution guidelines and plugin architecture
+- [ ] Port training code to Python 3.14 + PyTorch 2.x with type hints
+- [ ] Implement custom autograd functions for Straight-Through Estimator (STE) binarization
+- [ ] Add OpenVINO 2026 Model Optimizer integration with binary layer support
+- [ ] Create automated benchmarking suite (latency, memory, accuracy, power)
+- [ ] Set up CI/CD pipeline (GitHub Actions) with conda `py314` environment
+- [ ] Write unit tests targeting 80%+ code coverage
+
+### Q2 — Hardware Coverage & Optimization (Months 4-6)
+
+**Milestone: Multi-hardware binary model deployment**
+
+- [ ] Add Intel NPU (Lunar Lake / Arrow Lake) deployment target
+- [ ] Implement Apple Neural Engine (ANE) binary model export via Core ML
+- [ ] Add Raspberry Pi 5 (ARM Cortex-A76) CPU inference backend with NEON intrinsics
+- [ ] Create hardware auto-selection based on available accelerators
+- [ ] Benchmark across Movidius NCS2, Intel NPU, ANE, and RPi5
+- [ ] Optimize batch inference pipeline for multi-camera scenarios
+
+### Q3 — Advanced Features & Training (Months 7-9)
+
+**Milestone: State-of-the-art binary training with accuracy recovery**
+
+- [ ] Implement BinaryBERT / binary transformer attention layers
+- [ ] Add progressive binarization scheduler (FP32 → INT8 → Binary)
+- [ ] Integrate knowledge distillation from FP32 teacher to binary student
+- [ ] Add binary channel pruning for further memory reduction
+- [ ] Implement on-device fine-tuning for domain adaptation
+- [ ] Create interactive visualization dashboard for training dynamics
+
+### Q4 — Production & Ecosystem (Months 10-12)
+
+**Milestone: Production deployment toolkit with documentation**
+
+- [ ] Package as `pip install binary-dnn-toolkit` with CLI interface
+- [ ] Create Docker images for reproducible builds (Ubuntu 24.04, macOS)
+- [ ] Add TensorRT binary model export for NVIDIA Jetson platforms
+- [ ] Implement model zoo with pre-trained binary models (ResNet-18, MobileNetV2, YOLO-nano)
+- [ ] Write comprehensive documentation with deployment guides per hardware
+- [ ] Publish benchmarking paper / technical report
+
+---
 
 ## Technical Debt
 
-1. **Legacy OpenVINO API** — Current code uses deprecated OpenVINO v1.x API; must migrate to Inference Engine 2.0 (P0)
-2. **No automated training pipeline** — BNN training is manual; needs PyTorch integration with automated binarization hooks (P0)
-3. **Missing hardware abstraction** — Code is tightly coupled to Movidius NCS; needs abstraction for multi-platform (P1)
-4. **No CI/CD** — No automated builds, tests, or deployments; blocks reliable releases (P1)
-5. **Insufficient test coverage** — Current tests cover <20% of inference pipeline; need comprehensive validation (P1)
-6. **Hardcoded model paths** — Configuration embedded in source; needs environment-based config system (P2)
-7. **No quantization sensitivity analysis** — Per-layer bit-width is static; needs automated sensitivity profiling (P2)
-8. **Missing documentation** — API docs, deployment guides, and architecture diagrams are absent (P2)
-9. **Outdated dependencies** — Training dependencies reference PyTorch 1.x; must upgrade to 2.x (P2)
-10. **No profiling infrastructure** — Performance monitoring is ad-hoc; needs standardized benchmarking framework (P3)
+| ID | Item | Priority | Est. Effort |
+|---|---|---|---|
+| TD-1 | No automated tests exist | High | 1 week |
+| TD-2 | README lacks installation/setup instructions | High | 1 day |
+| TD-3 | No dependency management (requirements.txt / pyproject.toml) | High | 1 day |
+| TD-4 | No versioning or release tags | Medium | 1 day |
+| TD-5 | .gitignore is Delphi-specific, not Python/C++ appropriate | Low | 1 hour |
+| TD-6 | No OpenVINO version pinning or compatibility matrix | Medium | 2 days |
+| TD-7 | Benchmarking results not reproducible (no seed/dataset versioning) | Medium | 3 days |
+| TD-8 | Missing model serialization format documentation | Low | 1 day |
 
 ## Future Features
 
-### Short-Term (3-6 months)
-- **Automated Model Compression Wizard** — GUI-driven tool for selecting quantization strategy based on target hardware and accuracy requirements
-- **Real-time Adaptive Inference** — Dynamically adjust bit-width per frame based on input complexity and power budget
-- **ONNX Model Hub Integration** — One-command deployment from Hugging Face / ONNX Model Zoo to edge devices
-
-### Medium-Term (6-9 months)
-- **Neural Architecture Search for BNN** — Hardware-aware NAS that co-optimizes topology and quantization for specific edge targets
-- **Federated BNN Training** — Privacy-preserving distributed training of binarized models across edge devices
-- **Multi-Modal Binary Vision** — Extend BNN support to object detection (YOLO), segmentation (SAM), and pose estimation
-
-### Long-Term (9-12 months)
-- **Edge AI Marketplace** — Community platform for sharing and monetizing optimized BNN models
-- **Self-Optimizing Edge Fleet** — Reinforcement learning-based inference optimization that adapts to deployment patterns
-- **Quantum-Ready Binary Models** — Research into binary representations compatible with quantum computing backends
+- **Binary Convolution Custom CUDA Kernels**: Hand-optimized CUDA 13 kernels for XNOR-popcount operations on NVIDIA Jetson/RTX hardware
+- **ONNX Binary Model Standard**: Contribute binary operator extensions to ONNX spec for cross-framework portability
+- **WebAssembly Binary Inference**: Compile binary DNNs to WASM for browser-based edge inference
+- **Federated Binary Learning**: Enable distributed training of binary models across edge devices with differential privacy
+- **AutoBNN Architecture Search**: Neural architecture search specialized for binary-convertible network topologies
+- **Real-Time Video Analytics Pipeline**: End-to-end binary DNN pipeline for multi-camera surveillance with sub-10ms latency
+- **Edge-to-Cloud Model Sync**: Automatic model versioning and OTA deployment for fleet management of edge devices
